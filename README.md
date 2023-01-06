@@ -6,7 +6,6 @@ Things the devops project should solve:
 * Creating NGINX web server
 * Creating and renewing certs
 * Having instructions to send logs to logtail or other services
-* Creating a common network that other services can use
 * Pulling all the services together and starting them up on a box
 
 
@@ -15,7 +14,7 @@ Things the devops project should solve:
 All composes will be flattened. There is no need for external volumes and networks
 
 **1. Volumes**
-Add to `common/volumes.docker-compose.yml`.
+Add to `docker-compose.yml`.
 
 **2. Server blocks**
 Add `name.conf` to `services/blocks`. Make sure there is only one default block. Example given in the examples folder.

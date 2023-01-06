@@ -2,10 +2,13 @@
 domains=(example.com www.example.com) # UPDATE DOMAINS HERE
 email="" # UPDATE EMAIL HERE
 
-compose_files="-f docker-compose.yml -f certs.docker-compose.yml"
+compose_files="-f docker-compose.yml -f setup/certs.docker-compose.yml"
 data_path="./certbot"  # Do not update path here setup to use this folder
 rsa_key_size=4096
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+
+# Build docker in case it changed
+docker compose ${compose_files} build
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
@@ -26,7 +29,7 @@ fi
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
-docker compose ${compose_files} run --build --rm --entrypoint "\
+docker compose ${compose_files} run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
@@ -35,7 +38,7 @@ echo
 
 
 echo "### Starting nginx ..."
-docker compose ${compose_files} up --build --force-recreate -d nginx
+docker compose ${compose_files} up --force-recreate -d nginx
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
