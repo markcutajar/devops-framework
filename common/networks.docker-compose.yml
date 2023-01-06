@@ -1,0 +1,4 @@
+networks:
+  services_network:
+    name: services_network
+    driver: bridge
