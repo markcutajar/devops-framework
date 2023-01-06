@@ -1,3 +1,0 @@
-volumes:
-  static_volume:
-    name: static_volume
