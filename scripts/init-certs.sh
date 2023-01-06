@@ -2,6 +2,7 @@
 domains=(example.com www.example.com) # UPDATE DOMAINS HERE
 email="" # UPDATE EMAIL HERE
 
+compose_files="-f common/proxy.docker-compose.yml -f setup/certs.docker-compose.yml"
 data_path="./certbot"  # Do not update path here setup to use this folder
 rsa_key_size=4096
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
@@ -25,7 +26,7 @@ fi
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
-docker compose -f setup/certs.docker-compose.yml run --rm --entrypoint "\
+docker compose ${compose_files} run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
@@ -34,11 +35,11 @@ echo
 
 
 echo "### Starting nginx ..."
-docker compose -f setup/certs.docker-compose.yml up --force-recreate -d nginx
+docker compose ${compose_files} up --force-recreate -d nginx
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
-docker compose -f setup/certs.docker-compose.yml run --rm --entrypoint "\
+docker compose ${compose_files} run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$domains && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
   rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
@@ -61,7 +62,7 @@ esac
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
-docker compose -f setup/certs.docker-compose.yml run --rm --entrypoint "\
+docker compose ${compose_files} run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
     $staging_arg \
     $email_arg \
@@ -72,4 +73,4 @@ docker compose -f setup/certs.docker-compose.yml run --rm --entrypoint "\
 echo
 
 echo "### Reloading nginx ..."
-docker compose -f setup/certs.docker-compose.yml exec nginx nginx -s reload
+docker compose ${compose_files} exec nginx nginx -s reload
