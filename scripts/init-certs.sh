@@ -2,7 +2,7 @@
 domains=(example.com www.example.com) # UPDATE DOMAINS HERE
 email="" # UPDATE EMAIL HERE
 
-compose_files="-f proxy.docker-compose.yml -f volumes.docker-compose.yml -f certs.docker-compose.yml"
+compose_files="-f docker-compose.yml -f certs.docker-compose.yml"
 data_path="./certbot"  # Do not update path here setup to use this folder
 rsa_key_size=4096
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
@@ -35,7 +35,7 @@ echo
 
 
 echo "### Starting nginx ..."
-docker compose ${compose_files} up --force-recreate -d nginx
+docker compose ${compose_files} up --build --force-recreate -d nginx
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
