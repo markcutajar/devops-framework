@@ -2,13 +2,15 @@
 domains=(example.com www.example.com) # UPDATE DOMAINS HERE
 email="" # UPDATE EMAIL HERE
 
-compose_files="-f docker-compose.yml -f setup/certs.docker-compose.yml"
+# AWK LOGIC HERE: https://www.baeldung.com/linux/join-multiple-lines
+# In the awk section. However changed to NR==0 as we want d also at the start
+SERVICES=$(find services -type f -name "*docker-compose.yml" | awk -v d=" -f " '{s=(NR==0?s:s d)$0}END{print s}')
+DEFAULTS="-f docker-compose.yml -f setup/certs.docker-compose.yml "
+
+compose_files="$DEFAULTS$SERVICES"
 data_path="./certbot"  # Do not update path here setup to use this folder
 rsa_key_size=4096
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
-
-# Build docker in case it changed
-docker compose ${compose_files} build
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
@@ -17,6 +19,9 @@ if [ -d "$data_path" ]; then
   fi
 fi
 
+# Build docker in case it changed
+docker compose ${compose_files} build
+docker compose ${compose_files} up -d
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
@@ -64,6 +69,9 @@ esac
 
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
+if [ $staging == "0" ]; then staging_arg=""; fi
+echo "Setting staging arg: "
+echo $staging_arg
 
 docker compose ${compose_files} run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
