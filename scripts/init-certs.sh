@@ -55,7 +55,7 @@ echo
 
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
-#Join $domains to -d args
+# Join $domains to -d args
 domain_args=""
 for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
@@ -70,7 +70,8 @@ esac
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
 if [ $staging == "0" ]; then staging_arg=""; fi
-echo "Setting staging arg: "
+
+echo "Staging argis: "
 echo $staging_arg
 
 docker compose ${compose_files} run --rm --entrypoint "\

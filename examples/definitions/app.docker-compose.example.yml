@@ -1,0 +1,8 @@
+services:
+  ui:
+    image: app/image
+    command: yarn start
+    expose:
+      - 3000
+    env_file:
+      - ./.env
