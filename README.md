@@ -11,26 +11,23 @@ Things the devops project should solve:
 
 ### File setup
 
-All composes will be flattened. There is no need for external volumes and networks
+1. Clone repository
+2. Create blocks and service definitions in services referencing the appropriate .env files
+3. For deployable services make sure to have the image version reference an environment variable. Example: `markcutajar/my-new-application:${MY_NEW_APP_VERSION}`
+4. For each of the deployable services, create a version file in `/versions` with the name of the environment variable above. Example: `/versions/MY_NEW_APP_VERSION`
+5. If the server is development in the versions file put in `latest` that way the image will always reference the latest pushed image.
+6. If the server is production, this variable will have the version number to deploy and the file will be modified by CICD.
+7. Run the script `scripts/init-server.sh` to install docker
+8. Add the domains in a file called `DOMAINS` and these should be new line delimited. Make sure there is no blank new line at the end. Make sure the top domain in the file is the expected one when referencing in the nginx 433 clauses.
+9. Add the email in a file called `EMAIL`. Make sure there is no blank line at the end.
+10. Run `scripts/init-certs.sh` to initialize certifications.
+11. Copy services/blocks into services/blocks-backup
+12. Edit all blocks in services/blocks, remove the 433 block
+13. Run `scripts/deploy.sh` to run deploys.
+14. Delete services/blocks and copy back services/blocks-backup into blocks.
 
-**1. Volumes**
-Add to `docker-compose.yml`.
-
-**2. Server blocks**
-Add `name.conf` to `services/blocks`. Make sure there is only one default block. Example given in the examples folder.
-
-**3. Services**
-Add services compose files to `services/definitions`. Make sure names are unique across services as these will be flattened and run together. You can access other services using the service name as these will be on the same bridge network. There is no need to specify the external network as they will be run using same docker compose command.
-
-Make sure the images are prehosted as this service cannot build images for these external services.
-
-### Services setup
-**1. Run certbot**
-
-Update the `scripts/init-certs.sh` with the correct domains and email and then run the script. This will fetch / renew the certs for these domains.
-
-**2. Start the services**
-Run the `scripts/start.sh` command from top level to start the different services.
-
-Run the `scripts/start-detached.sh` command from top level to start the different services in detached mode.
-
+## Helpful notes
+* Make sure docker is logged in
+* Make sure you add circleci key as authorized key
+* Make sure docker network is not clashing with any internal network
+* Make sure you do not have empty line in the domains file

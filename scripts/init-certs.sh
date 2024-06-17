@@ -1,6 +1,6 @@
 #!/bin/bash
-domains=(example.com www.example.com) # UPDATE DOMAINS HERE
-email="" # UPDATE EMAIL HERE
+mapfile -t domains < DOMAINS  # Update domains in file DOMAINS
+email=$(<EMAIL)  # Update email in file called EMAIL
 
 # AWK LOGIC HERE: https://www.baeldung.com/linux/join-multiple-lines
 # In the awk section. However changed to NR==0 as we want d also at the start

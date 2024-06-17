@@ -1,4 +1,10 @@
+shared/*
+!shared/.gitkeep
+versions/*
+!versions/.gitkeep
 data/
 .env
 .env.db
 certbot/
+DOMAINS
+EMAIL
