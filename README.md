@@ -8,6 +8,8 @@ Things the devops project should solve:
 * Having instructions to send logs to logtail or other services
 * Pulling all the services together and starting them up on a box
 
+### Prerequisites
+Make sure the image is a docker image or docker is installed
 
 ### File setup
 
@@ -20,11 +22,11 @@ Things the devops project should solve:
 7. Run the script `scripts/init-server.sh` to install docker
 8. Add the domains in a file called `DOMAINS` and these should be new line delimited. Make sure there is no blank new line at the end. Make sure the top domain in the file is the expected one when referencing in the nginx 433 clauses.
 9. Add the email in a file called `EMAIL`. Make sure there is no blank line at the end.
-10. Run `scripts/init-certs.sh` to initialize certifications.
-11. Copy services/blocks into services/blocks-backup
-12. Edit all blocks in services/blocks, remove the 433 block
-13. Run `scripts/deploy.sh` to run deploys.
-14. Delete services/blocks and copy back services/blocks-backup into blocks.
+10. Copy services/blocks into services/blocks-backup
+11. Edit all blocks in services/blocks, remove the 433 block
+12. Run `scripts/init-certs.sh` to initialize certifications.
+13. Delete services/blocks and copy back services/blocks-backup into blocks.
+14. Run `scripts/deploy.sh` to run deploys.
 
 ## Helpful notes
 * Make sure docker is logged in
